@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full bg-stone-100 text-stone-800">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bratwurstbestellung bei Peter</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff5f5',
+                            100: '#fed7d7',
+                            500: '#c53030',
+                            600: '#9b2c2c',
+                            700: '#8b0000',
+                            800: '#742a2a',
+                            900: '#4a1515',
+                        },
+                        amber: {
+                            50: '#fffbe3',
+                            100: '#fef3c7',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f5f5f4; }
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] { -moz-appearance: textfield; }
+
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+        .animate-subtle { animation: subtle-pulse 3s infinite ease-in-out; }
+
+        /* DRUCK-STYLES FÜR PETER'S DRUCKANSICHT */
+        @media print {
+            /* 1. Alle Nicht-Druck-Elemente vollständig aus dem Layout entfernen (verhindert leere Folgeseiten) */
+            #topBanner, header, main, footer, #adminLoginModal, #adminDashboardModal, #setupModal, #successModal, .no-print {
+                display: none !important;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                height: auto !important;
+                min-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            /* 2. Modal-Container für Druck flachdrücken */
+            #printModal {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+
+            #printModal > div {
+                border: none !important;
+                box-shadow: none !important;
+                max-height: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                background: #ffffff !important;
+            }
+
+            #printSection {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+            }
+
+            /* 3. Tabellenformatierung für sauberen 1-Seiten-Druck */
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin-top: 10px !important;
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            th, td {
+                border: 1px solid #000000 !important;
+                padding: 5px 6px !important;
+                font-size: 10pt !important;
+            }
+
+            th {
+                background-color: #f2f2f2 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: bold;
+            }
+
+            /* 4. Seitengröße und Querformat erzwingen */
+            @page {
+                size: landscape;
+                margin: 8mm;
+            }
+        }
+        </style>
+</head>
+<body class="min-h-full flex flex-col bg-stone-100 text-stone-800 antialiased selection:bg-brand-700 selection:text-white">
+
+    <div id="topBanner" class="bg-gradient-to-r from-brand-900 via-brand-800 to-amber-900 border-b border-brand-700 py-2.5 px-4 shadow-sm text-center text-xs sm:text-sm font-medium text-amber-100 animate-subtle">
+        <div class="max-w-6xl mx-auto flex items-center justify-center gap-2">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-clock text-amber-300"></i>
+                <span id="bannerNoticeText"><strong>Bestellschluss:</strong> Montag, 09.11.2026 um 19:00 Uhr</span>
+            </div>
+        </div>
+    </div>
+
+    <header class="relative bg-white border-b border-stone-200 overflow-hidden py-8 sm:py-10 px-4 sm:px-8 shadow-sm">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#8b0000_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <button type="button" onclick="handleLogoClick()" title="Dreifachklick für Admin-Zugang" class="inline-block px-3.5 py-1 bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 transition-colors cursor-pointer select-none">
+                <i class="fa-solid fa-drumstick-bite mr-1"></i> <span id="headerSubTitle">Metzgerei Peter &bull; Frische Qualität</span>
+            </button>
+            <h1 id="headerMainTitle" class="text-3xl sm:text-5xl font-bold text-stone-900 tracking-tight mb-2 font-serif">
+                Bratwurstbestellung bei Peter für den
+            </h1>
+            <p id="headerPickupText" class="text-brand-700 font-serif italic text-2xl sm:text-4xl font-extrabold mt-3 tracking-wide">
+                Freitag, den 13.11.2026
+            </p>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <div id="lockedFormNotice" class="hidden mb-8 bg-red-50 border-2 border-red-300 rounded-2xl p-6 sm:p-8 shadow-lg text-center space-y-3">
+            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl border border-red-200">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-stone-900 font-serif">Bestellungen aktuell geschlossen</h2>
+            <p id="lockedMessageText" class="text-sm sm:text-base text-stone-600 max-w-2xl mx-auto">
+                Der Bestellschluss für diesen Termin ist leider abgelaufen. Wir können derzeit keine weiteren Bestellungen entgegennehmen.
+            </p>
+        </div>
+
+        <form id="orderForm" onsubmit="handleFormSubmit(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="lg:col-span-7 space-y-8">
+                
+                <section class="bg-white border border-stone-200/80 rounded-2xl p-5 sm:p-7 shadow-sm">
+                    <h2 class="text-xl font-bold text-stone-900 mb-5 flex items-center gap-2 border-b border-stone-100 pb-3 font-serif">
+                        <i class="fa-solid fa-user-tag text-brand-700"></i> 1. Ihre Kontaktdaten
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="nachname" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                                Nachname <span class="text-brand-600">*</span>
+                            </label>
+                            <input type="text" id="nachname" required placeholder="z. B. Mustermann"
+                                class="form-input-field w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:bg-white transition-all">
+                        </div>
+                        <div>
+                            <label for="vorname" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                                Vorname <span class="text-brand-600">*</span>
+                            </label>
+                            <input type="text" id="vorname" required placeholder="z. B. Erika"
+                                class="form-input-field w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:bg-white transition-all">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                                E-Mail-Adresse <span class="text-stone-400 font-normal">(optional)</span>
+                            </label>
+                            <input type="email" id="email" placeholder="name@beispiel.de" oninput="toggleEmailCheckbox(this.value)"
+                                class="form-input-field w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:bg-white transition-all">
+                            
+                            <!-- E-Mail Benachrichtigung Checkbox -->
+                            <div id="emailCheckboxContainer" class="mt-3 hidden transition-all duration-300">
+                                <label class="flex items-center gap-2 cursor-pointer bg-brand-50/50 p-2.5 rounded-lg border border-brand-100">
+                                    <input type="checkbox" id="emailBenachrichtigung" checked class="form-input-field w-4 h-4 text-brand-700 bg-white border-stone-300 rounded focus:ring-brand-700 focus:ring-2 cursor-pointer">
+                                    <span class="text-sm text-stone-700 font-medium">Ich möchte per E-Mail über meine Bestellung informiert werden.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white border border-stone-200/80 rounded-2xl p-5 sm:p-7 shadow-sm space-y-6">
+                    <div class="border-b border-stone-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                        <h2 class="text-xl font-bold text-stone-900 flex items-center gap-2 font-serif">
+                            <i class="fa-solid fa-utensils text-brand-700"></i> 2. Produktauswahl
+                        </h2>
+                        <span class="text-xs font-medium text-stone-500 bg-stone-100 border border-stone-200 px-3 py-1 rounded-full">Preise inkl. MwSt.</span>
+                    </div>
+
+                    <div class="space-y-4" id="productList">
+                    </div>
+                </section>
+
+                <section class="bg-white border border-stone-200/80 rounded-2xl p-5 sm:p-7 shadow-sm">
+                    <h2 class="text-xl font-bold text-stone-900 mb-4 flex items-center gap-2 border-b border-stone-100 pb-3 font-serif">
+                        <i class="fa-solid fa-comment-dots text-brand-700"></i> 3. Anmerkungen & Wünsche
+                    </h2>
+                    <textarea id="kommentar" rows="3" placeholder="Besondere Hinweise zur Abholung oder Verpackung..."
+                        class="form-input-field w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:bg-white transition-all resize-none"></textarea>
+                </section>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="sticky top-6 space-y-6">
+                    
+                    <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-md relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-full blur-2xl pointer-events-none"></div>
+                        
+                        <div class="flex items-center justify-between border-b border-stone-100 pb-4 mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-stone-900 font-serif">Bestellübersicht</h3>
+                                <p class="text-xs text-stone-500">Automatische Live-Berechnung</p>
+                            </div>
+                            <i class="fa-solid fa-receipt text-2xl text-brand-700"></i>
+                        </div>
+
+                        <div id="receiptItems" class="space-y-3 min-h-[120px] max-h-[300px] overflow-y-auto pr-1 text-sm border-b border-stone-100 pb-4">
+                            <p class="text-stone-400 text-center py-8 italic text-xs">Noch keine Artikel ausgewählt</p>
+                        </div>
+
+                        <div class="pt-4 space-y-2">
+
+                            <div class="flex justify-between items-center text-sm text-stone-600">
+                                <span>Zwischensumme:</span>
+                                <span id="subtotalPrice" class="font-mono font-medium">0,00 €</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm text-stone-600">
+                                <span>Abholung:</span>
+                                <span class="text-emerald-700 font-medium">Kostenlos</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xl font-bold text-stone-900 pt-3 border-t border-stone-100">
+                                <span class="text-brand-800 font-serif">Gesamtsumme:</span>
+                                <span id="totalPrice" class="text-2xl font-serif text-brand-700 font-mono">0,00 €</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submitBtn"
+                            class="w-full mt-6 bg-brand-700 hover:bg-brand-800 text-white font-bold py-4 px-6 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Jetzt verbindlich bestellen</span>
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-stone-200 rounded-2xl max-w-sm w-full shadow-2xl p-6 space-y-4 relative">
+            <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-brand-50 text-brand-700 rounded-full flex items-center justify-center mx-auto text-xl mb-2 border border-brand-100">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 class="text-xl font-bold text-stone-900 font-serif">Admin-Zugang</h3>
+                <p class="text-xs text-stone-500">Bitte Passwort eingeben</p>
+            </div>
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="adminPasswordInput" placeholder="Passwort..." required
+                        class="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-center text-stone-900 focus:outline-none focus:ring-2 focus:ring-brand-700 font-mono">
+                    <p id="loginErrorMsg" class="text-xs text-red-600 text-center mt-1.5 font-medium hidden">Falsches Passwort!</p>
+                </div>
+                <button type="submit" class="w-full py-3 bg-brand-700 hover:bg-brand-800 text-white font-bold rounded-xl transition-all shadow">
+                    Anmelden
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD MODAL -->
+    <div id="adminDashboardModal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-stone-200 rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-5 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+                <div class="flex items-center gap-3">
+                    <span class="p-2.5 bg-brand-50 text-brand-700 rounded-xl border border-brand-100">
+                        <i class="fa-solid fa-sliders text-xl"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 font-serif">Admin-Verwaltung</h3>
+                        <p class="text-xs text-stone-500">Texte, Fristen, Produkte & Druckansicht</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminDashboard()" class="text-stone-400 hover:text-stone-700 p-2">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-8 flex-grow bg-stone-50/50">
+                
+                <!-- DIREKT-DRUCK & BESTELLLISTE BEREICH -->
+                <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-brand-900 border border-stone-700 text-white rounded-2xl p-6 shadow-md space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-amber-300 text-base uppercase tracking-wider flex items-center gap-2 font-serif">
+                                <i class="fa-solid fa-print text-amber-400 text-lg"></i> Bestellliste drucken (Sortiert nach Nachname)
+                            </h4>
+                            <p class="text-xs text-stone-300 leading-relaxed max-w-2xl">
+                                Lädt alle aktuellen Kundenbestellungen für den gewählten Abholtermin aus Google Sheets, sortiert diese <strong>alphabetisch A–Z nach Nachnamen</strong> und öffnet eine A4-Druckansicht.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2.5 w-full sm:w-auto">
+                            <button type="button" onclick="openGoogleSheetDirectly()" class="w-full sm:w-auto px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap">
+                                <i class="fa-solid fa-file-excel text-base"></i> Google Sheet öffnen
+                            </button>
+                            <button type="button" onclick="loadAndOpenPrintView()" class="w-full sm:w-auto px-5 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-extrabold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap">
+                                <i class="fa-solid fa-print text-base"></i> Bestellliste anzeigen & drucken
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-stone-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <h4 class="font-bold text-brand-800 text-sm uppercase tracking-wider flex items-center gap-2 font-serif">
+                        <i class="fa-solid fa-bullhorn text-brand-700"></i> Allgemeine Einstellungen
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Top-Banner Hinweis Text</label>
+                            <input type="text" id="adminNoticeInput" class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Abholtext / Datum (Header)</label>
+                            <input type="text" id="adminPickupInput" class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-stone-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <h4 class="font-bold text-red-800 text-sm uppercase tracking-wider flex items-center gap-2 font-serif">
+                        <i class="fa-solid fa-user-lock text-red-600"></i> Automatische Formular-Sperre & Bestellstopp
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Bestellschluss Datum & Uhrzeit</label>
+                            <input type="datetime-local" id="adminDeadlineInput" class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700">
+                            <p class="text-[11px] text-stone-500 mt-1">Sperrt das Formular automatisch ab diesem Zeitpunkt.</p>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Manuelle Sofort-Sperre</label>
+                            <div class="flex items-center gap-3 pt-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="adminLockCheckbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-stone-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                                </label>
+                                <span class="text-xs text-stone-700 font-semibold">Formular manuell sofort sperren</span>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block font-medium text-stone-700 mb-1">Sperr-Nachricht für Kunden</label>
+                            <textarea id="adminLockMessageInput" rows="2" class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700 resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ERWEITERTE EINSTELLUNGEN -->
+                <div class="bg-white border border-stone-200 rounded-xl p-5 space-y-4 shadow-sm">
+                    <h4 class="font-bold text-stone-800 text-sm uppercase tracking-wider flex items-center gap-2 font-serif">
+                        <i class="fa-solid fa-gears text-brand-700"></i> Erweiterte Einstellungen
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Google Apps Script Webhook-URL</label>
+                            <input type="url" id="adminWebhookUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700 font-mono">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-stone-700 mb-1">Google Sheet Direkt-Link (URL zur Tabelle)</label>
+                            <div class="flex gap-2">
+                                <input type="url" id="adminSheetUrlInput" placeholder="https://docs.google.com/spreadsheets/d/..." class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700 font-mono">
+                                <button type="button" onclick="openGoogleSheetDirectly()" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Öffnen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block font-medium text-stone-700 mb-1">Neues Admin-Passwort</label>
+                            <input type="text" id="adminPasswordChangeInput" placeholder="Neues Passwort eingeben..." class="w-full bg-stone-50 border border-stone-300 rounded-lg p-2.5 text-stone-800 focus:ring-1 focus:ring-brand-700 font-mono">
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-stone-100">
+                        <button type="button" onclick="toggleSetupModal()" class="w-full py-2.5 px-4 bg-stone-100 hover:bg-stone-200 border border-stone-300 rounded-xl text-stone-700 hover:text-stone-900 text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-sm">
+                            <i class="fa-solid fa-code text-brand-700"></i>
+                            <span>Anleitung & Google Sheets Script anzeigen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-stone-900 text-sm uppercase tracking-wider flex items-center gap-2 font-serif">
+                                <i class="fa-solid fa-boxes-stacked text-brand-700"></i> Produkte, Preise & Stückgewichte
+                            </h4>
+                            <p class="text-[11px] text-stone-500">Passe Namen, Preise (€) sowie das Gewicht in Gramm pro Einheit an.</p>
+                        </div>
+                        <button type="button" onclick="showAddProductRow()" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm">
+                            <i class="fa-solid fa-plus"></i> Neues Produkt
+                        </button>
+                    </div>
+
+                    <div id="addProductForm" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-3">
+                        <h5 class="text-xs font-bold text-emerald-800 uppercase">Neues Produkt hinzufügen</h5>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-6 gap-3 text-xs">
+                            <input type="text" id="newProdName" placeholder="Name" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                            <input type="text" id="newProdDesc" placeholder="Beschreibung" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                            <input type="number" step="0.01" id="newProdPrice" placeholder="Preis (€)" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                            <input type="number" step="1" id="newProdWeight" placeholder="Gewicht (g)/Einheit" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                            <select id="newProdType" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                                <option value="counter">Stück / Paar / Lende</option>
+                                <option value="gramm_hybrid">Grammware (Keck/Hack)</option>
+                            </select>
+                            <input type="text" id="newProdUnit" placeholder="Einheit (z.B. Paar)" class="bg-white border border-stone-300 rounded-lg p-2 text-stone-800">
+                        </div>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button type="button" onclick="hideAddProductRow()" class="px-3 py-1 bg-stone-200 text-stone-700 rounded text-xs">Abbrechen</button>
+                            <button type="button" onclick="addNewProduct()" class="px-4 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded text-xs font-semibold">Speichern</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-stone-200 rounded-xl overflow-x-auto shadow-sm">
+                        <table class="w-full text-left text-xs text-stone-700">
+                            <thead class="bg-stone-100 text-stone-600 font-semibold uppercase tracking-wider border-b border-stone-200">
+                                <tr>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Beschreibung</th>
+                                    <th class="p-3">Preis (€)</th>
+                                    <th class="p-3">Gewicht/Einheit (g)</th>
+                                    <th class="p-3">Einheit / Typ</th>
+                                    <th class="p-3 text-right">Aktion</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminProductsTableBody" class="divide-y divide-stone-100">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-stone-200 bg-white flex flex-wrap justify-between items-center gap-3">
+                <button type="button" onclick="resetToDefaults()" class="px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> Werkseinstellungen zurücksetzen
+                </button>
+                <div class="flex items-center gap-3">
+                    <button type="button" onclick="closeAdminDashboard()" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl text-xs font-semibold transition-colors">
+                        Abbrechen
+                    </button>
+                    <button type="button" onclick="saveAdminSettings()" class="px-5 py-2 bg-brand-700 hover:bg-brand-800 text-white rounded-xl text-xs font-bold transition-colors shadow">
+                        Änderungen speichern & übernehmen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINT MODAL & DRUCKBEREICH -->
+    <div id="printModal" class="fixed inset-0 bg-stone-900/80 backdrop-blur-md z-[100] flex items-center justify-center p-2 sm:p-6 hidden">
+        <div class="bg-white border border-stone-300 rounded-2xl max-w-6xl w-full max-h-[95vh] flex flex-col shadow-2xl overflow-hidden">
+            
+            <div class="p-4 border-b border-stone-200 bg-stone-50 flex flex-wrap justify-between items-center gap-3 no-print">
+                <div class="flex items-center gap-3">
+                    <span class="p-2 bg-amber-100 text-amber-800 rounded-xl">
+                        <i class="fa-solid fa-print text-xl"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-bold text-stone-900 font-serif">Druckvorschau: Bestellliste für Peter</h3>
+                        <p class="text-xs text-stone-500">Automatisch sortiert nach Nachname (A–Z)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="triggerBrowserPrint()" class="px-5 py-2 bg-brand-700 hover:bg-brand-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow transition-all">
+                        <i class="fa-solid fa-print"></i> Jetzt Drucken
+                    </button>
+                    <button type="button" onclick="closePrintModal()" class="px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-xl text-xs font-semibold transition-colors">
+                        Schließen
+                    </button>
+                </div>
+            </div>
+
+            <!-- DER TATSÄCHLICHE DRUCKBEREICH -->
+            <div class="p-6 overflow-y-auto flex-grow bg-white" id="printSection">
+                <div class="mb-4 border-b-2 border-stone-900 pb-3 flex justify-between items-end">
+                    <div>
+                        <h1 class="text-2xl font-bold font-serif text-stone-900 uppercase tracking-tight">Metzgerei Peter &bull; Bestellliste</h1>
+                        <p id="printHeaderPickupText" class="text-sm font-bold text-stone-700 mt-0.5">Abholtermin: Freitag, den 13.11.2026</p>
+                    </div>
+                    <div class="text-right text-xs text-stone-600">
+                        <p>Stand: <span id="printTimestampText">-</span></p>
+                        <p class="font-bold text-stone-900">Sortierung: Alphabetisch nach Nachname (A–Z)</p>
+                    </div>
+                </div>
+
+                <div id="printTableContainer">
+                    <p class="text-stone-500 italic text-center py-12">Lade Bestellungen...</p>
+                </div>
+
+                <div class="mt-6 pt-3 border-t border-stone-300 flex justify-between items-center text-xs text-stone-600 font-mono">
+                    <span>Gesamtanzahl Kunden: <strong id="printTotalCustomers">0</strong></span>
+                    <span>Gesamter Fleischbedarf: <strong id="printTotalWeight">0,00 kg</strong></span>
+                    <span>Gesamteinnahmen: <strong id="printTotalRevenue">0,00 €</strong></span>
+                </div>
+            </div>
+
+            <div class="p-3 border-t border-stone-200 bg-stone-50 flex justify-end no-print">
+                <button type="button" onclick="closePrintModal()" class="px-4 py-1.5 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-xs font-semibold">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANLEITUNGS-MODAL (GOOGLE APPS SCRIPT CODE) -->
+    <div id="setupModal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-stone-200 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex justify-between items-start border-b border-stone-100 pb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-stone-900 flex items-center gap-2 font-serif">
+                        <i class="fa-file-excel text-emerald-600"></i> Google Sheets Script (inkl. Datumssuche)
+                    </h3>
+                    <p class="text-xs text-stone-500 mt-1">Sucht genau den passenden Tab für das gewünschte Abholdatum</p>
+                </div>
+                <button onclick="toggleSetupModal()" class="text-stone-400 hover:text-stone-700 p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-stone-700">
+                <p>Ersetze deinen Code im Google Apps Script Editor (*Erweiterungen &rarr; Apps Script* in Google Sheets) durch diesen korrigierten Code:</p>
+                
+                <pre class="p-3 bg-stone-50 rounded-xl text-stone-800 border border-stone-200 font-mono text-xs overflow-x-auto select-all">
+function doPost(e) {
+  try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(JSON.stringify({"result": "error", "message": "Keine POST-Daten empfangen"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var data = JSON.parse(e.postData.contents);
+    
+    // 0. Globale Konfiguration (Sperre, Passwort, Preise, Texte) speichern
+    if (data.action === "saveConfig") {
+      if (data.config) {
+        PropertiesService.getScriptProperties().setProperty("APP_CONFIG", JSON.stringify(data.config));
+        return ContentService.createTextOutput(JSON.stringify({"result": "success", "message": "Konfiguration global gespeichert"})).setMimeType(ContentService.MimeType.JSON);
+      }
+      return ContentService.createTextOutput(JSON.stringify({"result": "error", "message": "Keine Konfiguration übermittelt"})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sheetApp = SpreadsheetApp.getActiveSpreadsheet();
+    var rawDate = data.abholDatum || "Allgemein";
+    var sheetName = rawDate.replace(/[/\?%*:|"< >]/g, '_').substring(0, 30);
+    
+    var sheet = sheetApp.getSheetByName(sheetName);
+    var baseHeaders = ["Zeitstempel", "Nachname", "Vorname", "E-Mail", "Abholdatum", "Gesamtgewicht", "Gesamtsumme", "Kommentar"];
+    
+    // 1. Tabellenblatt anlegen, falls es noch nicht existiert
+    if (!sheet) {
+      sheet = sheetApp.insertSheet(sheetName);
+      var initHeaders = baseHeaders.slice();
+      
+      var prodsToAdd = [];
+      if (data.allProductNames && data.allProductNames.length > 0) {
+        prodsToAdd = data.allProductNames;
+      } else if (data.items && data.items.length > 0) {
+        prodsToAdd = data.items.map(function(it) { return it.name; });
+      }
+      
+      prodsToAdd.forEach(function(pName) {
+        if (initHeaders.indexOf(pName) === -1) {
+          initHeaders.push(pName);
+        }
+      });
+      
+      sheet.appendRow(initHeaders);
+      var hRange = sheet.getRange(1, 1, 1, initHeaders.length);
+      hRange.setFontWeight("bold").setBackground("#8b0000").setFontColor("#ffffff");
+      sheet.setFrozenRows(1);
+    }
+    
+    // 2. Erfasse alle Produkte, die als Spalte existieren müssen
+    var neededProducts = [];
+    if (data.allProductNames && data.allProductNames.length > 0) {
+      neededProducts = data.allProductNames;
+    } else if (data.items && data.items.length > 0) {
+      neededProducts = data.items.map(function(it) { return it.name; });
+    }
+    
+    // 3. Prüfe vorhandene Kopfzeile in Google Sheets & ergänze fehlende Spalten
+    for (var p = 0; p < neededProducts.length; p++) {
+      var prodName = neededProducts[p];
+      var currentHeaders = sheet.getRange(1, 1, 1, Math.max(1, sheet.getLastColumn())).getValues()[0];
+      
+      var found = false;
+      for (var c = 0; c < currentHeaders.length; c++) {
+        if (String(currentHeaders[c]).trim().toLowerCase() === String(prodName).trim().toLowerCase()) {
+          found = true;
+          break;
+        }
+      }
+      
+      if (!found) {
+        var nextCol = currentHeaders.length + 1;
+        sheet.getRange(1, nextCol).setValue(prodName).setFontWeight("bold").setBackground("#8b0000").setFontColor("#ffffff");
+      }
+    }
+    
+    // 4. Frische finale Kopfzeile einlesen
+    var finalHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var newRow = new Array(finalHeaders.length).fill("");
+    
+    newRow[0] = new Date().toLocaleString("de-DE");
+    newRow[1] = data.nachname || "";
+    newRow[2] = data.vorname || "";
+    newRow[3] = data.email || "";
+    newRow[4] = data.abholDatum || "";
+    
+    var totalGrammOrder = 0;
+    
+    if (data.items && data.items.length > 0) {
+      data.items.forEach(function(item) {
+        var colIndex = -1;
+        for (var h = 0; h < finalHeaders.length; h++) {
+          if (String(finalHeaders[h]).trim().toLowerCase() === String(item.name).trim().toLowerCase()) {
+            colIndex = h;
+            break;
+          }
+        }
+        if (colIndex !== -1) {
+          newRow[colIndex] = Number(item.qty) || 0;
+        }
+        if (item.totalWeightGramm) {
+          totalGrammOrder += item.totalWeightGramm;
+        }
+      });
+    }
+
+    var weightColIndex = -1;
+    var sumColIndex = -1;
+    var kommentarColIndex = -1;
+
+    for (var h = 0; h < finalHeaders.length; h++) {
+      var headerLower = String(finalHeaders[h]).toLowerCase();
+      if (headerLower.indexOf("gewicht") !== -1 || headerLower.indexOf("fleischbedarf") !== -1) {
+        weightColIndex = h;
+      } else if (headerLower.indexOf("gesamtsumme") !== -1 || headerLower.indexOf("summe") !== -1) {
+        sumColIndex = h;
+      } else if (headerLower.indexOf("kommentar") !== -1) {
+        kommentarColIndex = h;
+      }
+    }
+
+    if (weightColIndex !== -1) {
+      newRow[weightColIndex] = totalGrammOrder / 1000;
+    }
+
+    if (sumColIndex !== -1) {
+      newRow[sumColIndex] = (typeof data.totalSum === 'number') ? data.totalSum : 0;
+    }
+
+    if (kommentarColIndex !== -1) {
+      newRow[kommentarColIndex] = data.kommentar || "";
+    }
+    
+    // Alte GESAMTSUMME-Zeile löschen
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      var lastRowFirstCell = sheet.getRange(lastRow, 1).getValue();
+      if (String(lastRowFirstCell).indexOf("GESAMTSUMME") !== -1) {
+        sheet.deleteRow(lastRow);
+      }
+    }
+    
+    // Neue Datenzeile anhängen
+    sheet.appendRow(newRow);
+    var addedRowIndex = sheet.getLastRow();
+
+    if (weightColIndex !== -1) {
+      sheet.getRange(addedRowIndex, weightColIndex + 1).setNumberFormat('0.00" kg"');
+    }
+    if (sumColIndex !== -1) {
+      sheet.getRange(addedRowIndex, sumColIndex + 1).setNumberFormat('0.00" €"');
+    }
+    
+    // GESAMTSUMME-Zeile am Tabellenende aufbauen
+    var newLastRow = sheet.getLastRow();
+    if (newLastRow >= 2) {
+      var sumRow = new Array(finalHeaders.length).fill("");
+      sumRow[0] = "GESAMTSUMME";
+      
+      for (var colIdx = 0; colIdx < finalHeaders.length; colIdx++) {
+        var hName = String(finalHeaders[colIdx]).trim();
+        var hLower = hName.toLowerCase();
+        var colLetter = getColLetter(colIdx + 1);
+        
+        if (hLower.indexOf("gesamtsumme") !== -1 || hLower.indexOf("gewicht") !== -1 || hLower.indexOf("fleischbedarf") !== -1 || (colIdx >= 8 && hLower !== "kommentar")) {
+          sumRow[colIdx] = '=SUM(' + colLetter + '2:' + colLetter + newLastRow + ')';
+        }
+      }
+      
+      sheet.appendRow(sumRow);
+      var sumRowIndex = sheet.getLastRow();
+
+      if (weightColIndex !== -1) {
+        sheet.getRange(sumRowIndex, weightColIndex + 1).setNumberFormat('0.00" kg"');
+      }
+      if (sumColIndex !== -1) {
+        sheet.getRange(sumRowIndex, sumColIndex + 1).setNumberFormat('0.00" €"');
+      }
+
+      var sumRange = sheet.getRange(sumRowIndex, 1, 1, finalHeaders.length);
+      sumRange.setFontWeight("bold").setBackground("#e8f5e9");
+    }
+
+    // 5. Bestätigungs-E-Mail senden
+    var recipientEmail = (data.emailRaw || data.email || "").trim();
+    if (recipientEmail === "Nicht angegeben" || recipientEmail === "Ohne Benachrichtigung") {
+      recipientEmail = "";
+    }
+
+    var isOptedIn = data.emailBenachrichtigung !== false;
+
+    if (isOptedIn && recipientEmail.indexOf("@") !== -1) {
+      try {
+        var mailSubject = "Bestellbestätigung - Metzgerei Peter (" + (data.abholDatum || "Abholung") + ")";
+        
+        var mailBody = "Hallo " + (data.vorname || "") + " " + (data.nachname || "") + ",\n\n" +
+          "vielen Dank für deine Bestellung bei der Metzgerei Peter!\n\n" +
+          "----------------------------------------\n" +
+          "Abholtermin: " + (data.abholDatum || "") + "\n" +
+          "----------------------------------------\n\n" +
+          "Bestellte Artikel:\n";
+          
+        if (data.items && data.items.length > 0) {
+          data.items.forEach(function(item) {
+            var costStr = (Number(item.cost) || 0).toFixed(2).replace('.', ',');
+            mailBody += " • " + item.name + ": " + item.displayQty + " (" + costStr + " €)\n";
+          });
+        } else if (data.zusammenfassung) {
+          mailBody += " • " + data.zusammenfassung + "\n";
+        }
+        
+        mailBody += "\nGesamtsumme: " + (data.gesamtsumme || "0,00") + " €\n\n";
+        
+        if (data.kommentar && data.kommentar !== "Kein Kommentar") {
+          mailBody += "Anmerkung / Hinweis:\n" + data.kommentar + "\n\n";
+        }
+        
+        mailBody += "Herzliche Grüße,\nMetzgerei Peter";
+
+        try {
+          MailApp.sendEmail({
+            to: recipientEmail,
+            subject: mailSubject,
+            body: mailBody,
+            name: "Metzgerei Peter"
+          });
+        } catch (e1) {
+          GmailApp.sendEmail(recipientEmail, mailSubject, mailBody, {
+            name: "Metzgerei Peter"
+          });
+        }
+      } catch (mailError) {
+        Logger.log("E-Mail Fehler: " + mailError.toString());
+      }
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({"result": "success"})).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({"result": "error", "message": err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function testEmail() {
+  var email = Session.getActiveUser().getEmail();
+  if (!email) {
+    Logger.log("Keine eigene E-Mail automatisch erkannt.");
+    return;
+  }
+  MailApp.sendEmail(email, "Test-E-Mail Metzgerei Peter", "Die E-Mail-Sende-Funktion ist erfolgreich autorisiert und einsatzbereit!");
+  Logger.log("Test-E-Mail gesendet an: " + email);
+}
+
+function doGet(e) {
+  try {
+    var action = e && e.parameter ? e.parameter.action : null;
+
+    // Globale Konfiguration abrufen
+    if (action === "getConfig") {
+      var savedConfigStr = PropertiesService.getScriptProperties().getProperty("APP_CONFIG");
+      var config = savedConfigStr ? JSON.parse(savedConfigStr) : null;
+      return ContentService.createTextOutput(JSON.stringify({ "result": "success", "config": config })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === "getOrders") {
+      var sheetApp = SpreadsheetApp.getActiveSpreadsheet();
+      var rawDate = e.parameter.abholDatum || "Allgemein";
+      var sheetName = rawDate.replace(/[/\?%*:|"< >]/g, '_').substring(0, 30);
+      var sheet = sheetApp.getSheetByName(sheetName);
+      
+      if (!sheet) {
+        return ContentService.createTextOutput(JSON.stringify({ "result": "success", "orders": [], "headers": [] })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      var data = sheet.getDataRange().getValues();
+      if (data.length <= 1) {
+        return ContentService.createTextOutput(JSON.stringify({ "result": "success", "orders": [], "headers": [] })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      var headers = data[0];
+      var orders = [];
+      
+      for (var i = 1; i < data.length; i++) {
+        var row = data[i];
+        if (String(row[0]).indexOf("GESAMTSUMME") !== -1) continue;
+        
+        var orderObj = {};
+        for (var j = 0; j < headers.length; j++) {
+          orderObj[headers[j]] = row[j];
+        }
+        orders.push(orderObj);
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({ "result": "success", "orders": orders, "headers": headers })).setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "message": "Unbekannte Aktion" })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ "result": "error", "message": err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getColLetter(colIdx) {
+  var letter = '';
+  while (colIdx > 0) {
+    var temp = (colIdx - 1) % 26;
+    letter = String.fromCharCode(65 + temp) + letter;
+    colIdx = Math.floor((colIdx - 1) / 26);
+  }
+  return letter;
+}
+</pre>
+            </div>
+
+            <div class="pt-4 border-t border-stone-100 flex justify-end">
+                <button onclick="toggleSetupModal()" class="px-5 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-xl font-medium text-sm transition-all">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div id="successModal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-stone-200 rounded-2xl max-w-md w-full shadow-2xl p-6 sm:p-8 text-center space-y-5">
+            <div class="w-16 h-16 bg-emerald-50 border border-emerald-200 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-stone-900 font-serif">Vielen Dank für Ihre Bestellung!</h3>
+                <p class="text-sm text-stone-500 mt-1">Ihre Auswahl wurde erfolgreich übermittelt.</p>
+            </div>
+            <div id="successDetails" class="bg-stone-50 p-4 rounded-xl text-xs text-left text-stone-700 space-y-1 font-mono border border-stone-200">
+            </div>
+            <button onclick="resetOrderForm()" class="w-full py-3 bg-brand-700 hover:bg-brand-800 text-white font-semibold rounded-xl transition-all shadow">
+                Weitere Bestellung aufgeben
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-stone-200 py-6 text-center text-xs text-stone-500 flex flex-col items-center justify-center gap-2">
+        <p>&copy; 2026 Metzgerei Peter &bull; Frisch & Traditionell</p>
+        <button type="button" onclick="openAdminLoginModal()" class="text-stone-400 hover:text-brand-700 text-[11px] transition-colors flex items-center gap-1">
+            <i class="fa-solid fa-lock text-[9px]"></i> Admin-Zugang
+        </button>
+    </footer>
+
+    <script>
+        const DEFAULT_CONFIG = {
+            adminPassword: 'peter123',
+            webhookUrl: '',
+            sheetUrl: '',
+            pdfExportUrl: '',
+            bannerNotice: 'Bestellungen werden bis Montag, den 09.11.2026 um 19:00 Uhr entgegengenommen.',
+            mainTitle: 'Bratwurstbestellung bei Peter für den',
+            subTitle: 'Metzgerei Peter • Frische Qualität',
+            pickupText: 'Freitag, den 13.11.2026',
+            
+            isManuallyLocked: false,
+            lockDeadline: '2026-11-09T19:00',
+            lockedMessage: 'Der Bestellschluss für diesen Termin ist leider abgelaufen. Bei Fragen wende dich bitte direkt an Peter.',
+
+            products: [
+                { id: 'bratwurst', name: 'Bratwurst', price: 1.70, weightGrams: 200, unit: 'Paar', type: 'counter', desc: 'Hausmacher Bratwurst' },
+                { id: 'bratwurst_majoran', name: 'Bratwürste mit Majoran', price: 1.70, weightGrams: 200, unit: 'Paar', type: 'counter', desc: 'Würzig verfeinert mit Majoran' },
+                { id: 'gefuellte_lendchen', name: 'Gefüllte Lendchen', price: 8.50, weightGrams: 800, unit: 'Lende', type: 'counter', desc: 'Gefülltes Schweinefilet' },
+                { id: 'lende_ungefuellt', name: 'Ungefüllte Lendchen', price: 6.50, weightGrams: 700, unit: 'Lende', type: 'counter', desc: 'Zartes Schweinefilet ungefüllt' },
+                { id: 'bratwurstkeck', name: 'Bratwurstkeck', pricePerKg: 6.50, weightGrams: 1, unit: 'kg', type: 'gramm_hybrid', desc: 'Frisches Keck' },
+                { id: 'bratwurstkeck_majoran', name: 'Bratwurstkeck mit Majoran', pricePerKg: 6.50, weightGrams: 1, unit: 'kg', type: 'gramm_hybrid', desc: 'Frisches Keck mit Majoran' },
+                { id: 'pfeffis', name: 'Pfeffis', price: 2.50, weightGrams: 40, unit: 'Stück', type: 'counter', desc: 'Mit Keck gefüllte Pfefferstangen' }
+            ]
+        };
+
+        let appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        let orderState = {};
+        let logoClickCount = 0;
+        let logoClickTimer = null;
+
+        function loadSavedConfig() {
+            try {
+                const saved = localStorage.getItem('peters_metzgerei_config_light_v1');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    appConfig = { ...DEFAULT_CONFIG, ...parsed };
+                }
+            } catch (e) {
+                console.error("Fehler beim Laden von localStorage:", e);
+            }
+            applyConfigToUI();
+            fetchGlobalConfig();
+        }
+
+        async function fetchGlobalConfig() {
+            const webhookUrl = appConfig.webhookUrl || (document.getElementById('adminWebhookUrlInput') ? document.getElementById('adminWebhookUrlInput').value.trim() : '');
+            if (!webhookUrl || !webhookUrl.startsWith('http')) return;
+
+            try {
+                const fetchUrl = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'action=getConfig';
+                const res = await fetch(fetchUrl);
+                const data = await res.json();
+                if (data.result === 'success' && data.config) {
+                    appConfig = { ...DEFAULT_CONFIG, ...data.config };
+                    saveConfigToStorage();
+                    applyConfigToUI();
+                }
+            } catch (err) {
+                console.warn("Globale Konfiguration konnte nicht geladen werden:", err);
+            }
+        }
+
+        function saveConfigToStorage() {
+            try {
+                localStorage.setItem('peters_metzgerei_config_light_v1', JSON.stringify(appConfig));
+            } catch (e) {
+                console.error("Fehler beim Speichern in localStorage:", e);
+            }
+        }
+
+        function checkIsLocked() {
+            if (appConfig.isManuallyLocked) return true;
+            if (appConfig.lockDeadline) {
+                const deadlineDate = new Date(appConfig.lockDeadline);
+                const now = new Date();
+                if (!isNaN(deadlineDate.getTime()) && now >= deadlineDate) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function applyConfigToUI() {
+            document.getElementById('bannerNoticeText').innerHTML = `<strong>Bestellschluss:</strong> ${appConfig.bannerNotice}`;
+            document.getElementById('headerMainTitle').innerText = appConfig.mainTitle || 'Bratwurstbestellung bei Peter für den';
+            document.getElementById('headerSubTitle').innerText = appConfig.subTitle;
+            document.getElementById('headerPickupText').innerText = appConfig.pickupText;
+
+            const isLocked = checkIsLocked();
+            const lockedNoticeEl = document.getElementById('lockedFormNotice');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (isLocked) {
+                lockedNoticeEl.classList.remove('hidden');
+                document.getElementById('lockedMessageText').innerText = appConfig.lockedMessage || 'Bestellungen sind derzeit geschlossen.';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                lockedNoticeEl.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            const newOrderState = {};
+            appConfig.products.forEach(p => {
+                newOrderState[p.id] = orderState[p.id] || 0;
+            });
+            orderState = newOrderState;
+
+            renderProducts(isLocked);
+            updateCalculation();
+        }
+
+        function toggleEmailCheckbox(val) {
+            const container = document.getElementById('emailCheckboxContainer');
+            if (val.trim().length > 0) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function renderProducts(isLocked) {
+            const container = document.getElementById('productList');
+            container.innerHTML = '';
+
+            appConfig.products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'bg-stone-50 border border-stone-200/80 hover:border-brand-200 rounded-xl p-4 transition-all flex flex-col space-y-3 shadow-xs';
+
+                if (product.type === 'counter') {
+                    const priceDisplay = `${product.price.toFixed(2).replace('.', ',')} € / ${product.unit}`;
+                    const weightNotice = '';
+                    
+                    card.innerHTML = `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <div class="space-y-0.5">
+                                <h3 class="font-bold text-stone-900 text-base">${product.name}</h3>
+                                <p class="text-xs text-stone-500">${product.desc || ''}${weightNotice}</p>
+                                <p class="text-xs font-semibold text-brand-700">${priceDisplay}</p>
+                            </div>
+                            <div class="flex items-center border border-stone-300 bg-white rounded-xl p-1 self-end sm:self-center shadow-xs">
+                                <button type="button" onclick="adjustCounter('${product.id}', -1)" ${isLocked ? 'disabled' : ''}
+                                    class="w-9 h-9 flex items-center justify-center bg-stone-100 hover:bg-stone-200 active:bg-stone-300 rounded-lg text-stone-700 transition-colors text-lg font-bold disabled:opacity-40">
+                                    &minus;
+                                </button>
+                                <input type="number" id="input-${product.id}" value="${orderState[product.id] || 0}" min="0" step="1" ${isLocked ? 'disabled' : ''}
+                                    oninput="setDirectValue('${product.id}', this.value)"
+                                    class="w-14 text-center font-bold text-stone-900 bg-transparent focus:outline-none text-sm px-1 font-mono disabled:opacity-40" />
+                                <button type="button" onclick="adjustCounter('${product.id}', 1)" ${isLocked ? 'disabled' : ''}
+                                    class="w-9 h-9 flex items-center justify-center bg-brand-700 hover:bg-brand-800 active:bg-brand-900 rounded-lg text-white transition-colors text-lg font-bold shadow-xs disabled:opacity-40">
+                                    &#43;
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (product.type === 'gramm_hybrid') {
+                    const priceKg = product.pricePerKg || product.price || 6.50;
+                    const priceDisplay = `${priceKg.toFixed(2).replace('.', ',')} € / 1 kg`;
+                    
+                    const quickGramms = [500, 1000, 1500];
+                    let quickButtonsHTML = quickGramms.map(g => `
+                        <button type="button" onclick="setKeckGramm('${product.id}', ${g})" ${isLocked ? 'disabled' : ''}
+                            class="px-2.5 py-1 text-xs font-medium rounded-lg border border-stone-200 bg-white hover:bg-brand-50 hover:border-brand-300 text-stone-700 transition-all disabled:opacity-40 font-mono shadow-2xs">
+                            ${g}g
+                        </button>
+                    `).join('');
+
+                    card.innerHTML = `
+                        <div class="space-y-3">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                                <div>
+                                    <h3 class="font-bold text-stone-900 text-base">${product.name}</h3>
+                                    <p class="text-xs text-stone-500">${product.desc || ''}</p>
+                                    <p class="text-xs font-semibold text-brand-700">${priceDisplay}</p>
+                                </div>
+                                <div class="flex items-center gap-2 self-end sm:self-center">
+                                    <label class="text-xs text-stone-600 font-medium">Menge (g):</label>
+                                    <div class="relative flex items-center">
+                                        <input type="number" id="input-${product.id}" value="${orderState[product.id] || 0}" min="0" step="50" placeholder="z.B. 750" ${isLocked ? 'disabled' : ''}
+                                            oninput="setKeckGrammDirect('${product.id}', this.value)"
+                                            class="w-28 bg-white border border-stone-300 rounded-xl px-3 py-1.5 text-right font-bold text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-700 text-sm font-mono disabled:opacity-40" />
+                                        <span class="text-xs text-stone-500 font-semibold ml-1.5">g</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-2 border-t border-stone-200/80">
+                                <span class="block text-[10px] uppercase font-semibold text-stone-500 mb-1.5">Schnellauswahl Grammanzahl:</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${quickButtonsHTML}
+                                    <button type="button" onclick="setKeckGramm('${product.id}', 0)" ${isLocked ? 'disabled' : ''}
+                                        class="px-2.5 py-1 text-xs font-medium rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 transition-all disabled:opacity-40 shadow-2xs">
+                                        0g (Leeren)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.form-input-field').forEach(field => {
+                field.disabled = isLocked;
+            });
+        }
+
+        function adjustCounter(productId, delta) {
+            if (checkIsLocked()) return;
+            const current = orderState[productId] || 0;
+            const updated = Math.max(0, current + delta);
+            orderState[productId] = updated;
+
+            const inputEl = document.getElementById(`input-${productId}`);
+            if (inputEl) inputEl.value = updated;
+
+            updateCalculation();
+        }
+
+        function setDirectValue(productId, val) {
+            if (checkIsLocked()) return;
+            let num = parseInt(val, 10);
+            if (isNaN(num) || num < 0) num = 0;
+            orderState[productId] = num;
+            updateCalculation();
+        }
+
+        function setKeckGramm(productId, gramm) {
+            if (checkIsLocked()) return;
+            orderState[productId] = gramm;
+            const inputEl = document.getElementById(`input-${productId}`);
+            if (inputEl) inputEl.value = gramm;
+            updateCalculation();
+        }
+
+        function setKeckGrammDirect(productId, val) {
+            if (checkIsLocked()) return;
+            let num = parseInt(val, 10);
+            if (isNaN(num) || num < 0) num = 0;
+            orderState[productId] = num;
+            updateCalculation();
+        }
+
+        function updateCalculation() {
+            const receiptContainer = document.getElementById('receiptItems');
+            const subtotalEl = document.getElementById('subtotalPrice');
+            const totalEl = document.getElementById('totalPrice');
+            const totalWeightEl = document.getElementById('totalWeightDisplay');
+
+            let total = 0;
+            let totalGramms = 0;
+            let selectedItemsHTML = '';
+
+            appConfig.products.forEach(p => {
+                const qty = orderState[p.id] || 0;
+                if (qty > 0) {
+                    let itemTotal = 0;
+                    let itemWeightGrams = 0;
+                    let qtyLabel = '';
+
+                    if (p.type === 'counter') {
+                        itemTotal = qty * (p.price || 0);
+                        itemWeightGrams = qty * (p.weightGrams || 0);
+                        qtyLabel = `${qty} ${p.unit}`;
+                    } else if (p.type === 'gramm_hybrid') {
+                        const pKg = p.pricePerKg || p.price || 0;
+                        itemTotal = (qty / 1000) * pKg;
+                        itemWeightGrams = qty;
+                        qtyLabel = `${qty} g`;
+                    }
+
+                    total += itemTotal;
+                    totalGramms += itemWeightGrams;
+
+                    selectedItemsHTML += `
+                        <div class="flex justify-between items-center py-1.5 border-b border-stone-100 last:border-0">
+                            <div>
+                                <p class="font-semibold text-stone-800 text-xs">${p.name}</p>
+                                <p class="text-[11px] text-stone-500 font-mono">${qtyLabel}</p>
+                            </div>
+                            <span class="font-bold text-brand-700 text-xs font-mono">${itemTotal.toFixed(2).replace('.', ',')} €</span>
+                        </div>
+                    `;
+                }
+            });
+
+            if (selectedItemsHTML === '') {
+                receiptContainer.innerHTML = '<p class="text-stone-400 text-center py-8 italic text-xs">Noch keine Artikel ausgewählt</p>';
+            } else {
+                receiptContainer.innerHTML = selectedItemsHTML;
+            }
+
+            const formattedTotal = total.toFixed(2).replace('.', ',') + ' €';
+            subtotalEl.innerText = formattedTotal;
+            totalEl.innerText = formattedTotal;
+            if (totalWeightEl) totalWeightEl.innerText = (totalGramms / 1000).toFixed(2).replace('.', ',') + ' kg';
+        }
+
+        function handleLogoClick() {
+            logoClickCount++;
+            clearTimeout(logoClickTimer);
+            if (logoClickCount >= 3) {
+                logoClickCount = 0;
+                openAdminLoginModal();
+            } else {
+                logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1000);
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+                e.preventDefault();
+                openAdminLoginModal();
+            }
+        });
+
+        function openAdminLoginModal() {
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('loginErrorMsg').classList.add('hidden');
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('adminPasswordInput').focus(), 100);
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const inputPw = document.getElementById('adminPasswordInput').value;
+            if (inputPw === appConfig.adminPassword) {
+                closeAdminLoginModal();
+                openAdminDashboard();
+            } else {
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        
+        function openGoogleSheetDirectly() {
+            const sheetUrl = appConfig.sheetUrl || (document.getElementById('adminSheetUrlInput') ? document.getElementById('adminSheetUrlInput').value.trim() : '');
+            if (sheetUrl && sheetUrl.startsWith('http')) {
+                window.open(sheetUrl, '_blank');
+            } else {
+                alert('Bitte trage zuerst die Google Sheet URL (Direkt-Link) in den Admin-Einstellungen ein!');
+            }
+        }
+
+        function openAdminDashboard() {
+            document.getElementById('adminNoticeInput').value = appConfig.bannerNotice;
+            document.getElementById('adminPickupInput').value = appConfig.pickupText;
+            document.getElementById('adminWebhookUrlInput').value = appConfig.webhookUrl || '';
+            document.getElementById('adminSheetUrlInput').value = appConfig.sheetUrl || '';
+            document.getElementById('adminPasswordChangeInput').value = '';
+
+            document.getElementById('adminDeadlineInput').value = appConfig.lockDeadline || '';
+            document.getElementById('adminLockCheckbox').checked = !!appConfig.isManuallyLocked;
+            document.getElementById('adminLockMessageInput').value = appConfig.lockedMessage || '';
+
+            renderAdminProductsTable();
+            document.getElementById('adminDashboardModal').classList.remove('hidden');
+        }
+
+        function closeAdminDashboard() {
+            document.getElementById('adminDashboardModal').classList.add('hidden');
+        }
+
+        function renderAdminProductsTable() {
+            const tbody = document.getElementById('adminProductsTableBody');
+            tbody.innerHTML = '';
+
+            appConfig.products.forEach((p, index) => {
+                const tr = document.createElement('tr');
+                const pPrice = p.type === 'counter' ? p.price : (p.pricePerKg || p.price);
+                const pWeight = p.weightGrams || (p.type === 'gramm_hybrid' ? 1 : 0);
+
+                tr.innerHTML = `
+                    <td class="p-2">
+                        <input type="text" value="${p.name}" onchange="updateTempProduct(${index}, 'name', this.value)" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800">
+                    </td>
+                    <td class="p-2">
+                        <input type="text" value="${p.desc || ''}" onchange="updateTempProduct(${index}, 'desc', this.value)" class="w-full bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" step="0.05" value="${pPrice}" onchange="updateTempProduct(${index}, 'price', this.value)" class="w-20 bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800 font-mono">
+                    </td>
+                    <td class="p-2">
+                        <input type="number" step="1" value="${pWeight}" onchange="updateTempProduct(${index}, 'weightGrams', this.value)" class="w-20 bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800 font-mono">
+                    </td>
+                    <td class="p-2">
+                        <select onchange="updateTempProduct(${index}, 'type', this.value)" class="w-28 bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800 text-xs">
+                            <option value="counter" ${p.type === 'counter' ? 'selected' : ''}>Stück / Paar</option>
+                            <option value="gramm_hybrid" ${p.type === 'gramm_hybrid' ? 'selected' : ''}>Gramm / kg</option>
+                        </select>
+                        <input type="text" value="${p.unit}" onchange="updateTempProduct(${index}, 'unit', this.value)" class="w-20 bg-stone-50 border border-stone-300 rounded p-1.5 text-stone-800 mt-1">
+                    </td>
+                    <td class="p-2 text-right">
+                        <button type="button" onclick="deleteProduct(${index})" class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateTempProduct(index, field, value) {
+            if (field === 'price') {
+                const val = parseFloat(value) || 0;
+                if (appConfig.products[index].type === 'counter') {
+                    appConfig.products[index].price = val;
+                } else {
+                    appConfig.products[index].pricePerKg = val;
+                }
+            } else if (field === 'weightGrams') {
+                appConfig.products[index].weightGrams = parseInt(value, 10) || 0;
+            } else if (field === 'type') {
+                appConfig.products[index].type = value;
+                renderAdminProductsTable();
+            } else {
+                appConfig.products[index][field] = value;
+            }
+        }
+
+        function deleteProduct(index) {
+            if (confirm(`Möchten Sie "${appConfig.products[index].name}" wirklich löschen?`)) {
+                appConfig.products.splice(index, 1);
+                renderAdminProductsTable();
+            }
+        }
+
+        function showAddProductRow() {
+            document.getElementById('addProductForm').classList.remove('hidden');
+        }
+
+        function hideAddProductRow() {
+            document.getElementById('addProductForm').classList.add('hidden');
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('newProdName').value.trim();
+            const desc = document.getElementById('newProdDesc').value.trim();
+            const price = parseFloat(document.getElementById('newProdPrice').value) || 0;
+            const weightGrams = parseInt(document.getElementById('newProdWeight').value, 10) || 0;
+            const type = document.getElementById('newProdType').value;
+            const unit = document.getElementById('newProdUnit').value.trim() || (type === 'counter' ? 'Stück' : 'kg');
+
+            if (!name) {
+                alert('Bitte geben Sie einen Produktnamen ein.');
+                return;
+            }
+
+            const newId = 'prod_' + Date.now();
+            const newObj = { id: newId, name, desc, type, unit, weightGrams };
+
+            if (type === 'counter') {
+                newObj.price = price;
+            } else {
+                newObj.pricePerKg = price;
+            }
+
+            appConfig.products.push(newObj);
+            hideAddProductRow();
+            
+            document.getElementById('newProdName').value = '';
+            document.getElementById('newProdDesc').value = '';
+            document.getElementById('newProdPrice').value = '';
+            document.getElementById('newProdWeight').value = '';
+
+            renderAdminProductsTable();
+        }
+
+        async function saveAdminSettings() {
+            appConfig.bannerNotice = document.getElementById('adminNoticeInput').value.trim();
+            appConfig.pickupText = document.getElementById('adminPickupInput').value.trim();
+            appConfig.webhookUrl = document.getElementById('adminWebhookUrlInput').value.trim();
+            appConfig.sheetUrl = document.getElementById('adminSheetUrlInput').value.trim();
+
+            appConfig.lockDeadline = document.getElementById('adminDeadlineInput').value;
+            appConfig.isManuallyLocked = document.getElementById('adminLockCheckbox').checked;
+            appConfig.lockedMessage = document.getElementById('adminLockMessageInput').value.trim();
+
+            const newPw = document.getElementById('adminPasswordChangeInput').value.trim();
+            if (newPw) {
+                appConfig.adminPassword = newPw;
+            }
+
+            saveConfigToStorage();
+            applyConfigToUI();
+            closeAdminDashboard();
+
+            // Globale Speicherung in Google Apps Script
+            if (appConfig.webhookUrl && appConfig.webhookUrl.startsWith('http')) {
+                try {
+                    await fetch(appConfig.webhookUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'saveConfig',
+                            config: appConfig
+                        })
+                    });
+                } catch (e) {
+                    console.error("Fehler beim globalen Speichern:", e);
+                }
+            }
+
+            alert('Änderungen wurden erfolgreich lokal und global im Google Sheet gespeichert!');
+        }
+
+        function resetToDefaults() {
+            if (confirm('Möchten Sie wirklich alle Einstellungen auf die Werkseinstellungen zurücksetzen?')) {
+                appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+                saveConfigToStorage();
+                applyConfigToUI();
+                closeAdminDashboard();
+                alert('Auf Werkseinstellungen zurückgesetzt.');
+            }
+        }
+
+        /* -------------------------------------------------------------
+           LADEN & DRUCKEN DER SORTIERTEN BESTELLLISTE MIT ABHOLDATUM
+           ------------------------------------------------------------- */
+        async function loadAndOpenPrintView() {
+            const webhookUrl = appConfig.webhookUrl || document.getElementById('adminWebhookUrlInput').value.trim();
+            if (!webhookUrl || !webhookUrl.startsWith('http')) {
+                alert('Bitte trage zuerst die Google Apps Script Webhook-URL in den Admin-Einstellungen ein!');
+                return;
+            }
+
+            document.getElementById('printHeaderPickupText').innerText = 'Abholtermin: ' + appConfig.pickupText;
+            document.getElementById('printTimestampText').innerText = new Date().toLocaleString('de-DE');
+            document.getElementById('printModal').classList.remove('hidden');
+            
+            const container = document.getElementById('printTableContainer');
+            container.innerHTML = `
+                <div class="text-center py-12 space-y-3">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl text-brand-700"></i>
+                    <p class="text-stone-600 font-medium text-sm">Lade Bestellungen aus Google Sheets und sortiere nach Nachname (A–Z)...</p>
+                </div>
+            `;
+
+            try {
+                // Sende abholDatum mit, damit Apps Script genau das richtige Tabellenblatt durchsucht
+                const fetchUrl = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'action=getOrders&abholDatum=' + encodeURIComponent(appConfig.pickupText);
+                const response = await fetch(fetchUrl);
+                const data = await response.json();
+
+                if (data.result === 'success' && data.orders) {
+                    renderSortedPrintTable(data.orders, data.headers || []);
+                } else {
+                    container.innerHTML = '<p class="text-red-600 text-center py-8">Fehler beim Abrufen der Bestellungen aus Google Sheets.</p>';
+                }
+            } catch (err) {
+                console.error("Fehler beim Laden der Bestellungen:", err);
+                container.innerHTML = `
+                    <div class="text-center py-8 space-y-3">
+                        <p class="text-red-600 font-bold">Bestellungen konnten nicht geladen werden.</p>
+                        <p class="text-xs text-stone-500 max-w-md mx-auto">Prüfe, ob in Apps Script der aktualisierte Code neu als Web-App veröffentlicht wurde.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderSortedPrintTable(orders, headers) {
+            const container = document.getElementById('printTableContainer');
+            if (!orders || orders.length === 0) {
+                container.innerHTML = '<p class="text-stone-500 italic text-center py-12">Keine Bestellungen für diesen Termin vorhanden.</p>';
+                document.getElementById('printTotalCustomers').innerText = '0';
+                document.getElementById('printTotalWeight').innerText = '0,00 kg';
+                document.getElementById('printTotalRevenue').innerText = '0,00 €';
+                return;
+            }
+
+            // ALPHABETISCHES SORTIEREN NACH NACHNAME (A–Z), dann VORNAME
+            orders.sort((a, b) => {
+                const nachnameA = String(a['Nachname'] || '').trim().toLowerCase();
+                const nachnameB = String(b['Nachname'] || '').trim().toLowerCase();
+                
+                if (nachnameA < nachnameB) return -1;
+                if (nachnameA > nachnameB) return 1;
+
+                const vornameA = String(a['Vorname'] || '').trim().toLowerCase();
+                const vornameB = String(b['Vorname'] || '').trim().toLowerCase();
+                if (vornameA < vornameB) return -1;
+                if (vornameA > vornameB) return 1;
+                return 0;
+            });
+
+            // Ermittle alle Standard-Spalten (auch Variationen von alten/neuen Kopftiteln aus Google Sheets)
+            const standardFields = [
+                'Zeitstempel', 'Nachname', 'Vorname', 'E-Mail', 'Abholdatum', 
+                'Gesamtsumme (€)', 'Gesamtsumme', 'Summe', 
+                'Fleischbedarf (kg)', 'Fleischbedarf', 'Gesamtgewicht', 
+                'Kommentar'
+            ];
+
+            let productHeaders = [];
+            if (headers && headers.length > 0) {
+                productHeaders = headers.filter(h => !standardFields.includes(h));
+            } else {
+                let allKeys = new Set();
+                orders.forEach(o => Object.keys(o).forEach(k => allKeys.add(k)));
+                productHeaders = Array.from(allKeys).filter(k => !standardFields.includes(k));
+            }
+
+            let totalWeightGramsSum = 0;
+            let totalSumEuro = 0;
+
+            let tableHTML = `
+                <table class="w-full text-left text-xs border border-stone-800 border-collapse">
+                    <thead>
+                        <tr class="bg-stone-200 text-stone-900 font-bold border-b-2 border-stone-900">
+                            <th class="p-2 border border-stone-400 w-8 text-center">#</th>
+                            <th class="p-2 border border-stone-400 font-serif text-sm">Kunde (Nachname, Vorname)</th>
+                            <th class="p-2 border border-stone-400">Bestellte Produkte & Mengen</th>
+                            <th class="p-2 border border-stone-400 text-center w-24">Fleischbedarf</th>
+                            <th class="p-2 border border-stone-400 text-right w-24">Zu Zahlen</th>
+                            <th class="p-2 border border-stone-400 font-serif w-32">Anmerkung</th>
+                            <th class="p-2 border border-stone-400 text-center w-16">Abgeholt</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-300">
+            `;
+
+            orders.forEach((ord, idx) => {
+                const nachname = ord['Nachname'] || '';
+                const vorname = ord['Vorname'] || '';
+                const kommentar = ord['Kommentar'] || '';
+
+                // Flexibles Auslesen von Gesamtsumme & Gesamtgewicht
+                let rawSumme = ord['Gesamtsumme'] !== undefined ? ord['Gesamtsumme'] : (ord['Gesamtsumme (€)'] !== undefined ? ord['Gesamtsumme (€)'] : 0);
+                let rawGewicht = ord['Gesamtgewicht'] !== undefined ? ord['Gesamtgewicht'] : (ord['Fleischbedarf (kg)'] !== undefined ? ord['Fleischbedarf (kg)'] : (ord['Fleischbedarf'] !== undefined ? ord['Fleischbedarf'] : 0));
+
+                let sumNum = parseFloat(String(rawSumme).replace('€','').replace(',','.').trim()) || 0;
+                totalSumEuro += sumNum;
+
+                let weightNum = parseFloat(String(rawGewicht).replace('kg','').replace(',','.').trim()) || 0;
+                totalWeightGramsSum += weightNum;
+
+                const formattedSumme = sumNum.toFixed(2).replace('.', ',') + ' €';
+                const formattedGewicht = weightNum.toFixed(2).replace('.', ',') + ' kg';
+
+                let itemsList = [];
+                productHeaders.forEach(prodName => {
+                    const val = ord[prodName];
+                    if (val !== undefined && val !== null && String(val).trim() !== '' && String(val).trim() !== '0') {
+                        itemsList.push(`<strong>${prodName}:</strong> ${val}`);
+                    }
+                });
+
+                const itemsFormatted = itemsList.length > 0 ? itemsList.join(' &bull; ') : '<span class="text-stone-400 italic">Keine Artikel</span>';
+
+                tableHTML += `
+                    <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-stone-50'} hover:bg-amber-50">
+                        <td class="p-2 border border-stone-300 text-center font-mono font-bold">${idx + 1}</td>
+                        <td class="p-2 border border-stone-300 font-bold text-stone-900 text-sm">
+                            ${nachname}, ${vorname}
+                        </td>
+                        <td class="p-2 border border-stone-300 text-stone-800 leading-snug">
+                            ${itemsFormatted}
+                        </td>
+                        <td class="p-2 border border-stone-300 text-center font-mono font-semibold text-stone-700">
+                            ${formattedGewicht}
+                        </td>
+                        <td class="p-2 border border-stone-300 text-right font-mono font-extrabold text-brand-900 text-sm">
+                            ${formattedSumme}
+                        </td>
+                        <td class="p-2 border border-stone-300 text-stone-600 italic text-[11px]">
+                            ${kommentar && kommentar !== 'Kein Kommentar' ? kommentar : ''}
+                        </td>
+                        <td class="p-2 border border-stone-300 text-center">
+                            <div class="w-5 h-5 border-2 border-stone-800 mx-auto rounded-sm"></div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-stone-200 text-stone-900 font-bold border-t-2 border-stone-900 font-mono">
+                            <td colspan="3" class="p-2 border border-stone-400 text-right uppercase">Gesamtsummen:</td>
+                            <td class="p-2 border border-stone-400 text-center text-sm">${totalWeightGramsSum.toFixed(2).replace('.', ',')} kg</td>
+                            <td class="p-2 border border-stone-400 text-right text-sm text-brand-900">${totalSumEuro.toFixed(2).replace('.', ',')} €</td>
+                            <td colspan="2" class="p-2 border border-stone-400"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+            document.getElementById('printTotalCustomers').innerText = orders.length;
+            document.getElementById('printTotalWeight').innerText = totalWeightGramsSum.toFixed(2).replace('.', ',') + ' kg';
+            document.getElementById('printTotalRevenue').innerText = totalSumEuro.toFixed(2).replace('.', ',') + ' €';
+        }
+function triggerBrowserPrint() {
+            window.print();
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').classList.add('hidden');
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (checkIsLocked()) {
+                alert('Bestellungen sind derzeit geschlossen.');
+                return;
+            }
+
+            const nachname = document.getElementById('nachname').value.trim();
+            const vorname = document.getElementById('vorname').value.trim();
+            const emailRaw = document.getElementById('email').value.trim();
+            const kommentarRaw = document.getElementById('kommentar').value.trim();
+            
+            const emailBenachrichtigung = document.getElementById('emailBenachrichtigung').checked;
+            
+            let emailFinal = 'Nicht angegeben';
+            let kommentarFinal = kommentarRaw || 'Kein Kommentar';
+            
+            if (emailRaw) {
+                if (emailBenachrichtigung) {
+                    emailFinal = emailRaw;
+                } else {
+                    emailFinal = 'Ohne Benachrichtigung';
+                    kommentarFinal = `[Kontakt-Mail: ${emailRaw}] ` + (kommentarRaw ? `| Anmerkung: ${kommentarRaw}` : '');
+                }
+            }
+
+            let total = 0;
+            let totalGramms = 0;
+            let summaryArray = [];
+            let itemsData = [];
+
+            appConfig.products.forEach(p => {
+                const qty = orderState[p.id] || 0;
+                if (qty > 0) {
+                    let cost = p.type === 'counter' ? qty * (p.price || 0) : (qty / 1000) * (p.pricePerKg || p.price || 0);
+                    let itemWeightGrams = p.type === 'counter' ? qty * (p.weightGrams || 0) : qty;
+                    
+                    total += cost;
+                    totalGramms += itemWeightGrams;
+
+                    const unitStr = p.type === 'counter' ? p.unit : 'g';
+                    const displayQty = `${qty} ${unitStr}`;
+
+                    summaryArray.push(`${p.name}: ${displayQty} (${cost.toFixed(2).replace('.', ',')} €)`);
+                    itemsData.push({ 
+                        name: p.name, 
+                        qty: qty, 
+                        displayQty: displayQty, 
+                        cost: cost,
+                        totalWeightGramm: itemWeightGrams
+                    });
+                }
+            });
+
+            if (summaryArray.length === 0) {
+                alert('Bitte wählen Sie mindestens einen Artikel aus, bevor Sie bestellen.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Wird gesendet...</span>';
+
+            const payload = {
+                allProductNames: appConfig.products.map(p => p.name),
+                nachname,
+                vorname,
+                email: emailFinal,
+                emailRaw: emailRaw,
+                emailBenachrichtigung: (emailRaw.length > 0 && emailBenachrichtigung),
+                abholDatum: appConfig.pickupText,
+                zusammenfassung: summaryArray.join(' | '),
+                totalSum: total,
+                totalWeightKg: (totalGramms / 1000).toFixed(2),
+                gesamtsumme: total.toFixed(2).replace('.', ','),
+                kommentar: kommentarFinal,
+                items: itemsData
+            };
+
+            try {
+                const targetUrl = appConfig.webhookUrl || "";
+                if (targetUrl && targetUrl.startsWith('http')) {
+                    await fetch(targetUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+
+                const detailsContainer = document.getElementById('successDetails');
+                detailsContainer.innerHTML = `
+                    <p><strong>Kunde:</strong> ${vorname} ${nachname}</p>
+                    <p><strong>E-Mail:</strong> ${emailRaw || 'Nicht angegeben'} ${emailRaw && emailBenachrichtigung ? '<span class="text-brand-700">(Bestätigung erwünscht)</span>' : ''}</p>
+                    <p><strong>Abholung:</strong> ${payload.abholDatum}</p>
+                    <p class="mt-2 font-bold text-brand-700">Bestellte Artikel:</p>
+                    <ul class="list-disc list-inside space-y-0.5 text-stone-700">
+                        ${summaryArray.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                    <p class="mt-2 text-xs text-stone-500">Fleischbedarf dieser Bestellung: <strong>${(totalGramms/1000).toFixed(2).replace('.', ',')} kg</strong></p>
+                    <p class="mt-1 text-sm font-bold text-stone-900">Gesamtsumme: ${payload.gesamtsumme} €</p>
+                `;
+
+                document.getElementById('successModal').classList.remove('hidden');
+
+            } catch (err) {
+                console.error('Fehler beim Senden:', err);
+                alert('Es gab ein Problem beim Übermitteln der Bestellung.');
+            } finally {
+                if (!checkIsLocked()) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Jetzt verbindlich bestellen</span>';
+                }
+            }
+        }
+
+        function resetOrderForm() {
+            document.getElementById('orderForm').reset();
+            appConfig.products.forEach(p => { orderState[p.id] = 0; });
+            renderProducts(checkIsLocked());
+            updateCalculation();
+            document.getElementById('emailCheckboxContainer').classList.add('hidden');
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function toggleSetupModal() {
+            document.getElementById('setupModal').classList.toggle('hidden');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedConfig();
+            setInterval(applyConfigToUI, 60000);
+        });
+    </script>
+</body>
+</html>
